@@ -48,8 +48,8 @@ RgpioArowSet = 0x00
 RgpioBrowSet = 0x01
 RgpioArowOut = 0x12
 RgpioBrowOut = 0x13
-gppuA = 0x0C
-gppuB = 0x0D
+gppuA = 0x6
+gppuB = 0x16
 
 gpioAbinSet = ''
 gpioBbinSet = ''
@@ -118,7 +118,11 @@ class MCP23017:
         self.bus.write_byte_data(self.adress, RgpioBrowSet, int(self.gpioBbinSet, 2))
 
         if pull_up_down != None:
-            self._pullUp(pin, pull_up_down)
+            self._pullUp(pin, 1)
+        else:
+            self._pullUp(pin, 0)
+
+        self.pull_up_down = None
 
     def output(self, pin, set):
 
@@ -153,12 +157,12 @@ class MCP23017:
 
         return self.readRowBin[pin]
 
-    def _pullUp(self, pin, pull_up_down):
+    def _pullUp(self, pin, up_down):
 
         self.gpioAbinSetPu = ''
         self.gpioBbinSetPu = ''
 
-        self.gpioPullUp[pin] = pull_up_down
+        self.gpioPullUp[pin] = up_down
 
         for i in reversed(range(8)):
             self.gpioAbinSetPu += str(self.gpioPullUp[i])
